@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOPICS Ranking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>TOPICS</h1>
+        <h2 id="subtitle" class="subtitle-hidden">Targeted Objective Prioritizing Interactions Conference Sessions</h2>
+
+        <form id="topicsForm">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <div class="topic-buttons">
+                <button type="button" class="topic-button" data-topic="1">
+                    <span>Topic 1: Genome Sequencing</span>
+                    <p>Do not be ashamed that your favourite authors use the same four letters over and over again. Come here to discuss some reading tips..</p>
+                    <img src="ICONS\Sequencing.png" alt="Image 1">
+                </button>
+                <button type="button" class="topic-button" data-topic="2">
+                    <span>Topic 2: Community Interactions</span>
+                    <p>Who is to say what our microbial comrades are up to behind our back. Join others to gossip about such interactions.  </p>
+                    <img src="ICONS\MCI2.svg" alt="Image 2">
+                </button>
+                <button type="button" class="topic-button" data-topic="3">
+                    <span>Topic 3: Horizontal Gene Transfer</span>
+                    <p>Microbes partake in the most exclusive of trading card games. Don't let them have all the fun.</p>
+                    <img src="ICONS\Plasmid.png" alt="Image 3">
+                </button>
+            </div>
+
+            <input type="hidden" id="rank1" name="rank1">
+            <input type="hidden" id="rank2" name="rank2">
+            <input type="hidden" id="rank3" name="rank3">
+
+<p>Rank all the following topics. Your first click is your first choice.</p>
+
+            <input type="submit" value="Submit">
+        </form>
+
+        <h3>Meeting Schedule</h3>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Topics</th>
+            </tr>
+            <tr>
+                <td>May 28th, 2024</td>
+                <td>Pathogens, Models, Coevolution</td>
+            </tr>
+            <tr>
+                <td>June 25th, 2024</td>
+                <td>AMR, Phylogenies, Experimental Design</td>
+            </tr>
+            <tr>
+                <td>July 30th, 2024</td>
+                <td>Sequencing, Microbial Community Interactions, Horizontal Gene Transfer</td>
+            </tr>
+            <tr>
+                <td>August 27th, 2024</td>
+                <td>Disease Mapping, Metagenomics, Environmental Effects </td>
+            </tr>
+        </table>
+    </div>
+    
+    <script>
+        let rank = 1;
+        const buttons = document.querySelectorAll('.topic-button');
+        const colors = ['#E36000', '#E38C4C', '#E3AD86']; 
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.classList.contains('ranked')) {
+                    resetRankings(this);
+                } else {
+                    rankTopic(this);
+                }
+            });
+        });
+
+        function resetRankings(button) {
+            const currentRank = parseInt(button.getAttribute('data-rank'));
+            button.classList.remove('ranked');
+            button.style.backgroundColor = '#444';
+            button.removeAttribute('data-rank');
+            document.getElementById(`rank${currentRank}`).value = '';
+
+            for (let i = currentRank + 1; i <= 3; i++) {
+                const nextButton = document.querySelector(`.topic-button[data-rank="${i}"]`);
+                if (nextButton) {
+                    nextButton.setAttribute('data-rank', i - 1);
+                    nextButton.style.backgroundColor = colors[i - 2];
+                    document.getElementById(`rank${i - 1}`).value = nextButton.getAttribute('data-topic');
+                }
+            }
+
+            rank--;
+        }
+
+        function rankTopic(button) {
+            button.classList.add('ranked');
+            button.style.backgroundColor = colors[rank - 1];
+            button.setAttribute('data-rank', rank);
+            document.getElementById(`rank${rank}`).value = button.getAttribute('data-topic');
+            rank++;
+        }
+
+        function checkRanks() {
+            const rank1 = document.getElementById('rank1').value;
+            const rank2 = document.getElementById('rank2').value;
+            const rank3 = document.getElementById('rank3').value;
+
+            if (!rank1 || !rank2 || !rank3) {
+                alert('Please rank all topics before submitting.');
+                return false; 
+            }
+
+            return true; 
+        }
+
+        document.getElementById('topicsForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+
+            if (checkRanks()) {
+                const rank1 = document.getElementById('rank1').value;
+                const rank2 = document.getElementById('rank2').value;
+                const rank3 = document.getElementById('rank3').value;
+
+                const emailBody = `Name: ${name}\n\nTopic Rankings:\n\nRank 1: ${rank1}\nRank 2: ${rank2}\nRank 3: ${rank3}`;
+
+                window.location.href = `mailto:justin.gupta@mail.mcgill.ca?subject=TOPICS Ranking&body=${encodeURIComponent(emailBody)}`;
+            } else {
+                return false; 
+            }
+        });
+
+    </script>
+</body>
+</html>
+
